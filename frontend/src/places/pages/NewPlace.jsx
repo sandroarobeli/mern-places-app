@@ -1,3 +1,4 @@
+// Third party components
 import React from 'react'
 
 const NewPlace = () => {

@@ -15,7 +15,7 @@ const DUMMY_PLACES = [
        creator: 'u1',
        location: {
            lat: 40.7484,
-           lng: 73.9857
+           lng: -73.9857
        }
 
     },{
@@ -45,7 +45,7 @@ const DUMMY_PLACES = [
 
 const UserPlaces = () => {
     // useParams gives us access to the parameters (dynamic segments)
-    // the are properties of the object the useParams() returns
+    // they are properties of the object the useParams() returns
     const userId = useParams().userId
     const loadedPlaces = DUMMY_PLACES.filter(place => place.creator === userId)
 

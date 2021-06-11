@@ -1,9 +1,21 @@
 // Third party components
 import React from 'react'
 
+// Custom components
+import Input from '../../shared/components/FormElements/Input'
+import './NewPlace.css'
+
 const NewPlace = () => {
     return (
-        <h2>New Place Works!</h2>
+        <form className='place-form'>
+            <Input 
+                type='text' 
+                label='Title' 
+                element='input' 
+                validators={[]} 
+                errorText='Please enter a valid title' 
+            />
+        </form>
     )
 }
 

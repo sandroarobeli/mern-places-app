@@ -1,5 +1,5 @@
 // Third party components
-import React, { useReducer } from 'react'
+import React, { useReducer, useEffect } from 'react'
 
 // Custom components
 import { validate } from '../../util/validators'
@@ -29,6 +29,16 @@ const Input = props => {
     // useReducer is preferred when dealing with more complex/INTERCONNECTED state
     const [inputState, dispatch] = useReducer(inputReducer, { value: "", isTouched: false, isValid: false })
 
+    // destructuring relevant pieces, so useEffect only fires when ONLY these change
+    const { id, onInput} = props  
+    const { value, isValid } = inputState
+    
+    // Side effect module
+    useEffect(() => {
+        onInput(id, value, isValid)
+    }, [id, onInput, value, isValid]) 
+
+    
     const  changeHandler = event => {
         dispatch({
             type: 'CHANGE',

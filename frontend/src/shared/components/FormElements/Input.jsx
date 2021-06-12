@@ -27,7 +27,7 @@ const inputReducer = (state, action) => {
 
 const Input = props => {
     // useReducer is preferred when dealing with more complex/INTERCONNECTED state
-    const [inputState, dispatch] = useReducer(inputReducer, { value: "", isTouched: false, isValid: false })
+    const [inputState, dispatch] = useReducer(inputReducer, { value: props.value || "", isTouched: false, isValid: props.valid || false })
 
     // destructuring relevant pieces, so useEffect only fires when ONLY these change
     const { id, onInput} = props  

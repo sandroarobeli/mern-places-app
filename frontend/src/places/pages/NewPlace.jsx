@@ -1,56 +1,36 @@
 // Third party components
-import React, { useCallback, useReducer } from 'react'
+import React from 'react'
 
 // Custom components
 import Input from '../../shared/components/FormElements/Input'
 import Button from '../../shared/components/FormElements/Button'
 import { VALIDATOR_REQUIRE, VALIDATOR_MINLENGTH } from '../../shared/util/validators'
 import './NewPlace.css'
+import { useForm } from '../../shared/hooks/form-hook'
 
 
-const formReducer = (state, action) => {
-    switch(action.type) {
-        case 'INPUT_CHANGE':
-        let formIsValid = true    
-        for (const inputId in state.inputs) {
-            if (inputId === action.inputId) {
-                formIsValid = formIsValid && action.isValid
-            } else {
-                formIsValid = formIsValid && state.inputs[inputId].isValid
-            }
-        }
-        return {
-            ...state,
-            inputs: {
-                ...state.inputs,
-                [action.inputId]: { value: action.value, isValid: action.isValid }
-            },
-            isValid: formIsValid
-        }
-        default:
-            return state    
-    }
-}
 
 const NewPlace = () => {
-    const [formState, dispatch] = useReducer(formReducer, {
-        inputs: {
-            title: {
-                value: '',
-                isValid: false
-            },
-            description: {
-                value: '',
-                isValid: false
-            }
-        },
-        isValid: false 
-    })
 
-    // Wrapping a function with useCallback hook 'conserves' the function and avoids infinite loops 
-    const inputHandler = useCallback((id, value, isValid) => {
-        dispatch({ type: 'INPUT_CHANGE', value: value, isValid: isValid, inputId: id })
-    }, []) 
+    // REACT RULE: HOOKS MUST BE USED DIRECTLY INSIDE THE FUNCTION COMPONENT!
+    // CANNOT BE USED "INSIDE-INSIDE" EXAMPLE: INSIDE IF BLOCKS, INSIDE THEN()
+    // PROMISES ETC.
+    const [formState, inputHandler] = useForm({
+        title: {
+            value: '',
+            isValid: false
+        },
+        description: {
+            value: '',
+            isValid: false
+        },
+        address: {
+            value: '',
+            isValid: false
+        }
+    }, false)
+
+     
 
     const placeSubmitHandler = event => {
         event.preventDefault()

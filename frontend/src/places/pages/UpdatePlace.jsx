@@ -1,5 +1,5 @@
 // Third party components
-import React, { useReducer } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 // Custom components
@@ -8,6 +8,7 @@ import Button from '../../shared/components/FormElements/Button'
 import { VALIDATOR_REQUIRE, VALIDATOR_MINLENGTH } from '../../shared/util/validators'
 import './NewPlace.css'
 import { useForm } from '../../shared/hooks/form-hook'
+import Card from '../../shared/components/UIElements/Card'
 
 const formReducer = (state, action) => {
     switch(action.type) {
@@ -73,27 +74,54 @@ const DUMMY_PLACES = [
 
 
 const UpdatePlace = props => {
+    // temporary state until we connect to backend
+    const [isLoading, setIsLoading] = useState(true) 
+
     // Since we have placeId in path of Router, useParams() has access to it!
     const placeId = useParams().placeId
 
-    const identifiedPlace = DUMMY_PLACES.find(place => place.id === placeId)
-
     
+
+    // NOTE 1.
     // REACT RULE: HOOKS MUST BE USED DIRECTLY INSIDE THE FUNCTION COMPONENT!
     // CANNOT BE USED "INSIDE-INSIDE" EXAMPLE: INSIDE IF BLOCKS, INSIDE THEN()
     // PROMISES ETC.
-    const [formState, inputHandler] = useForm({
+    
+    // NOTE 2.
+    // THIS useForm() INITIALIZES WITH DEFAULTS BEFORE SERVER CALL
+    const [formState, inputHandler, setFormData] = useForm({
         title: {
-            value: identifiedPlace.title,
-            isValid: true
+            value: '',
+            isValid: false
         },
         description: {
-            value: identifiedPlace.description,
-            isValid: true
+            value: '',
+            isValid: false
         }
-    }, true)
+    }, false)
 
+    const identifiedPlace = DUMMY_PLACES.find(place => place.id === placeId)
+
+    // THIS setFormData() CALL UPDATES AFTER SERVER CALL FULFILLS THE DATA REQUEST
+    useEffect(() => {
+        // Manually typing some non existent place id will cause identifiedPlace object
+        // to become undefined. if() statement handles such scenario  
+        if (identifiedPlace) {
+            setFormData({
+                title: {
+                    value: identifiedPlace.title,
+                    isValid: true
+                },
+                description: {
+                    value: identifiedPlace.description,
+                    isValid: true
+                }
+            }, true)
+        }
+        setIsLoading(false) // temporary till backend is connected
+    }, [setFormData, identifiedPlace])
     
+
     const placeUpdateSubmitHandler = event => {
         event.preventDefault()
         // Sends the payload to server...
@@ -103,7 +131,20 @@ const UpdatePlace = props => {
     if (!identifiedPlace) {
         return (
             <div className='center'>
-                <h2>Could not find place!</h2>
+                <Card>
+                    <h2>Could not find place!</h2>
+                </Card>
+            </div>
+        )
+    }
+
+    // isLoading STATE is temporary till
+    // we connect to backend, so the form doesn't load unless the 'dummy_data'
+    // has been received
+    if (isLoading) {
+        return (
+            <div className='center'>
+                <h2>Loading...</h2>
             </div>
         )
     }

@@ -12,7 +12,7 @@ const router = express.Router()
 router.get('/:placeId', placesControllers.getPlaceById)
 
 // List all places created by a given user
-router.get('/user/:userId', placesControllers.getPlaceByUserId)
+router.get('/user/:userId', placesControllers.getPlacesByUserId)
 
 // Create a new Place
 router.post('/', placesControllers.createPlace) 

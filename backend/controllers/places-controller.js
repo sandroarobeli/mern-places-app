@@ -30,13 +30,13 @@ const getPlaceById  = (req, res, next) => {
 }
 
 // List all places created by a given user
-const getPlaceByUserId = (req, res, next) => {
+const getPlacesByUserId = (req, res, next) => {
     const userId = req.params.userId
     const places = DUMMY_PLACES.filter(place => place.creator === userId)
     if (!places || places.length === 0) {
         // IN SYNCHRONOUS MODE USE next(error) OR throw new Error('some generic message'),
         // IN A-SYNCHRONOUS MODE ONLY USE return next(error)
-        return next(new HttpError(`No places found`, 404))
+        return next(new HttpError(`No places found for user ${userId}`, 404))
     }
     
     res.json({ places })
@@ -77,7 +77,7 @@ const deletePlaceById = (req, res, next) => {
 }
 
 exports.getPlaceById = getPlaceById
-exports.getPlaceByUserId = getPlaceByUserId 
+exports.getPlacesByUserId = getPlacesByUserId 
 exports.createPlace = createPlace
 exports.updatePlaceById = updatePlaceById
 exports.deletePlaceById = deletePlaceById

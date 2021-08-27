@@ -1,5 +1,6 @@
 // Third party modules
 const express = require('express')
+const { check } = require('express-validator')
 
 // Custom modules
 const placesControllers = require('../controllers/places-controller')
@@ -15,10 +16,32 @@ router.get('/:placeId', placesControllers.getPlaceById)
 router.get('/user/:userId', placesControllers.getPlacesByUserId)
 
 // Create a new Place
-router.post('/', placesControllers.createPlace) 
+router.post(
+    '/', 
+    [
+        check('title')
+            .not()
+            .isEmpty(),
+        check('description')
+            .isLength({ min: 5 }),
+        check('address')
+            .not()
+            .isEmpty()        
+    ], 
+    placesControllers.createPlace
+) 
 
 // Update place
-router.patch('/:placeId', placesControllers.updatePlaceById)
+router.patch(
+    '/:placeId',
+    [
+        check('title')
+            .not()
+            .isEmpty(),
+        check('description')
+            .isLength({ min: 5})    
+    ],
+    placesControllers.updatePlaceById)
 
 // delete Place
 router.delete('/:placeId', placesControllers.deletePlaceById)

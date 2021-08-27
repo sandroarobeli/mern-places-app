@@ -1,3 +1,6 @@
+// Third party modules
+const { validationResult } = require('express-validator')
+
 // Custom modules
 const HttpError = require('../models/http-error')
 
@@ -18,6 +21,14 @@ const getUsers = (req, res, next) => {
 
 // Signup a new user
 const signup = (req, res, next) => {
+    // Middleware registered in the routes gets invoked here
+    // If returned errors object isn't empty, error is passed down the chain via next() 
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+        console.log(errors.errors)//test
+        return next(new HttpError('Invalid inputs entered. Please check your data', 422)) 
+    }
+
     const { name, email, password } = req.body
 
     const hasUser = DUMMY_USERS.find(user => user.email === email)

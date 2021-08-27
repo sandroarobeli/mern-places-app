@@ -1,5 +1,6 @@
 // Third party modules
 const express = require('express')
+const { check } = require('express-validator')
 
 // Custom modules
 const usersControllers = require('../controllers/users-controller')
@@ -11,7 +12,20 @@ const router = express.Router()
 router.get('/', usersControllers.getUsers)
 
 // Signup a new user
-router.post('/signup', usersControllers.signup)
+router.post(
+    '/signup', 
+    [
+        check('name')
+            .not()
+            .isEmpty(),
+        check('email')
+            .normalizeEmail() // toLowercase()
+            .isEmail(),
+        check('password')
+            .isLength({ min: 6 })
+    ], 
+    usersControllers.signup
+)
 
 // Login an existing user
 router.post('/login', usersControllers.login)

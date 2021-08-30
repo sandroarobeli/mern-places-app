@@ -3,7 +3,7 @@ const express = require('express')
 const cors = require('cors')
 
 // Database module 
-
+require('./db/mongoose')
 
 // Custom modules
 const usersRoutes = require('./routes/users-routes')  // Users router

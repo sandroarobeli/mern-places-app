@@ -9,7 +9,7 @@ const HttpError = require('../models/http-error')
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 /*
-// Generate welcome email upon creating a new user
+// Generate welcome email upon creating a new user (Async)
 const sendWelcomeEmail = async (name, email) => {
     try {
         sgMail.send({
@@ -37,7 +37,7 @@ const sendWelcomeEmail = (name, email) => {
 }
 
 /*
-// Generate follow up email upon deleting a user
+// Generate follow up email upon deleting a user (Async)
 const sendPartingEmail = async (name, email) => {
     try {
         sgMail.send({

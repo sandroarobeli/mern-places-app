@@ -15,6 +15,9 @@ router.get('/:placeId', placesControllers.getPlaceById)
 // List all places created by a given user
 router.get('/user/:userId', placesControllers.getPlacesByUserId)
 
+// List all places created by a given user II (ALTERNATIVE VERSION)
+router.get('/user/alt/:userId', placesControllers.getPlacesByUserId2)
+
 // Create a new Place
 router.post(
     '/', 

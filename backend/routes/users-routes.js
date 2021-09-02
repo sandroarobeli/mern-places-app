@@ -30,4 +30,7 @@ router.post(
 // Login an existing user
 router.post('/login', usersControllers.login)
 
+// delete a user
+router.delete('/delete/:userId', usersControllers.deleteUserById)
+
 module.exports = router

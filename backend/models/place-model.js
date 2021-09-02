@@ -1,6 +1,6 @@
 // Third party modules
 const mongoose = require('mongoose')
-// validator?
+
 
 // Define Place Schema
 const placeSchema = new mongoose.Schema({
@@ -34,10 +34,10 @@ const placeSchema = new mongoose.Schema({
             required: true
         }
     },
-    creator: { // will be replaced with refs(ObjectId) etc...)
-        type: String,
+    creator: { 
+        type: mongoose.Types.ObjectId,
         required: true,
-        trim: true // remove if interferes with refs etc.
+        ref: 'User'
     }
 })
 

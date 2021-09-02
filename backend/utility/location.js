@@ -1,14 +1,14 @@
 // Third party modules
 const axios = require('axios')
+require("dotenv").config();
 
 // Custom modules
 const HttpError = require('../models/http-error')
 
-const API_KEY = 'pk.eyJ1Ijoic2FuZHJvYXJvYmVsaTc3IiwiYSI6ImNrZHF1c2ZxdzE4dzQyeW1oYXVuMjNnemcifQ.OQ4keea0vl2LcamSCT6UVQ'
 
 const getCoordinates = async (address) => {
     try {
-        const response = await axios.get(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json?access_token=${API_KEY}`)
+        const response = await axios.get(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json?access_token=${process.env.MAPBOX_API_KEY}`)
 
         const coordinates = response.data.features[0].geometry.coordinates
         console.log(coordinates)        // test

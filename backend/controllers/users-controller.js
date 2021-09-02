@@ -4,7 +4,7 @@ const { validationResult } = require('express-validator')
 // Custom modules
 const HttpError = require('../models/http-error')
 const User = require('../models/user-model')
-
+const templateEmails = require('../utility/emails')
 
 // List all users
 const getUsers = async (req, res, next) => {
@@ -51,6 +51,8 @@ const signup = async (req, res, next) => {
     // THIS TRY-CATCH ENSURES PROPER NETWORK PROTOCOL EXCHANGE
     try {
         await createdUser.save()
+        // Send Welcome email (DOESN'T NEED ASYNC AWAIT, WHEN A USER GETS IT IS NOT IMPORTANT)
+        templateEmails.sendWelcomeEmail(name, email)        
         res.status(201).json({ user: createdUser.toObject({ getters: true })})
     } catch (error) {
         return next(new HttpError(`Creating User failed: ${error.message}`, 500))
@@ -84,11 +86,13 @@ const deleteUserById = async (req, res, next) => {
             return next(new HttpError(`User with ID: ${userId} not found`, 404))
         }
         await deletedUser.remove() // I use .REMOVE here so schema.pre('remove') can match it!
+        // Send Parting email
+        templateEmails.sendPartingEmail(deletedUser.name, deletedUser.email)
         res.status(200).json({ message: `User ${deletedUser.name} has been successfully deleted` })
     } catch (error) {
         return next(new HttpError(`Deleting User failed: ${error.message}`, 500))
     }
- }
+}
 
 
 exports.getUsers = getUsers

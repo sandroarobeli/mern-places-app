@@ -86,7 +86,7 @@ const deleteUserById = async (req, res, next) => {
             return next(new HttpError(`User with ID: ${userId} not found`, 404))
         }
         await deletedUser.remove() // I use .REMOVE here so schema.pre('remove') can match it!
-        // Send Parting email
+        // Send Parting email (DOESN'T NEED ASYNC AWAIT, WHEN A USER GETS IT IS NOT IMPORTANT)
         templateEmails.sendPartingEmail(deletedUser.name, deletedUser.email)
         res.status(200).json({ message: `User ${deletedUser.name} has been successfully deleted` })
     } catch (error) {

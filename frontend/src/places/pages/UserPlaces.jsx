@@ -1,56 +1,47 @@
 // Third party components
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 
 // Custom components
 import PlaceList from '../components/PlaceList'
+import ErrorModal from '../../shared/components/UIElements/ErrorModal'
+import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner'
+import { useHttpClient } from '../../shared/hooks/http-hook'
 
-
-const DUMMY_PLACES = [
-    {
-       id: 'p1',
-       title: 'Empire state building',
-       description: 'One of the most skyscrapers in the world',
-       imageUrl: 'https://media.istockphoto.com/photos/new-york-city-skyline-picture-id486334510?k=6&m=486334510&s=612x612&w=0&h=qMsSuzsZcCtSEZyhnEsJsQvRSx-feldCQAOR9D9mVas=',
-       address: '20 W 34th St, New York, NY 10001',
-       creator: 'u1',
-       location: {
-           lat: 40.7484,
-           lng: -73.9857
-       }
-
-    },{
-       id: 'p2',
-       title: 'Leaning tower of Pisa',
-       description: 'Leaning tower structure in the city of Pisa,Italy',
-       imageUrl: 'https://cdn.britannica.com/88/80588-050-8D944BFE/Leaning-Tower-of-Pisa-Italy.jpg',
-       address: 'Piazza del Duomo, 56126 Pisa PI, Italy',
-       creator: 'u1',
-       location: {
-           lat: 43.7230,
-           lng: 10.3966
-       }
-    },{
-       id: 'p3',
-       title: 'Le Louvre',
-       description: 'The Louvre museum in Paris, France',
-       imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Louvre_Courtyard%2C_Looking_West.jpg/805px-Louvre_Courtyard%2C_Looking_West.jpg',
-       address: 'Rue de Rivoli, 75001 Paris, France',
-       creator: 'u2',
-       location: {
-           lat: 48.8606,
-           lng: 2.3376
-       }
-    }
-]
 
 const UserPlaces = () => {
     // useParams gives us access to the parameters (dynamic segments)
     // they are properties of the object the useParams() returns
     const userId = useParams().userId
-    const loadedPlaces = DUMMY_PLACES.filter(place => place.creator === userId)
+    const [loadedPlaces, setLoadedPlaces] = useState([])
+    const { isLoading, error, sendRequest, clearError } = useHttpClient()
 
-    return <PlaceList items={loadedPlaces} />
+    useEffect(() => {
+        const fetchPlaces = async () => {
+            try {
+                const data = await sendRequest(`http://127.0.0.1:5000/api/places/user/${userId}`)
+                setLoadedPlaces(data.places)
+                console.log("USER'S PLACES:")// test
+                console.log(loadedPlaces) // test
+            } catch (error) {
+                // Do nothing here, useHttpClient() handles errors
+            }
+        }
+
+        fetchPlaces()
+    }, [sendRequest, userId]) // this way, it only renders once, when component is mounted
+  
+    const placeDeleteHandler = (deletedPlaceId) => {
+        setLoadedPlaces(prevState => prevState.filter(place => place.id !== deletedPlaceId))
+    }
+
+    return (
+        <React.Fragment>
+            <ErrorModal error={error} onClear={clearError} />
+            {isLoading && <div className='center'><LoadingSpinner /></div>}
+            {!isLoading && loadedPlaces && <PlaceList items={loadedPlaces} onDeletePlace={placeDeleteHandler}/>}
+        </React.Fragment>
+    )
 }
 
 export default UserPlaces

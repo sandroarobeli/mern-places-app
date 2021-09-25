@@ -26,7 +26,7 @@ const getPlaceById  = async (req, res, next) => {
     
 }
 
-// List all places created by a given user
+// List all places created by a given user // USE THIS CONTROLLER IN MUI VERSION
 const getPlacesByUserId = async (req, res, next) => {
     const userId = req.params.userId
     try {
@@ -34,7 +34,9 @@ const getPlacesByUserId = async (req, res, next) => {
         if (places.length === 0) {
             // IN SYNCHRONOUS MODE USE next(error) OR throw new Error('some generic message'),
             // IN A-SYNCHRONOUS MODE ONLY USE return next(error)
-            return next(new HttpError(`No places found for user ${userId}`, 404))
+            // NOTE: NO ERROR NEEDED HERE, THIS IS NOT AN ERROR. SIMPLY NO PLACES EXIST
+            return next(new HttpError(`No places found for this user`, 404))
+           
         }
         // adds id property (in addition to _id) to the returned Object(s)
         res.status(200).json({ places: places.map(place => place.toObject({ getters: true })) })
@@ -73,7 +75,7 @@ const createPlace = async (req, res, next) => {
     }
 
     // Getting manually entered properties from the user request  
-    const { title, description, image, address, creator } = req.body 
+    const { title, description, address, creator } = req.body // ADD image PROP HERE!!! 
     
     // Getting coordinates by using geocoding function
     // THIS TRY-CATCH ENSURES PROCESSING OF ADDRESS --> COORDINATES CONVERSION
@@ -88,7 +90,7 @@ const createPlace = async (req, res, next) => {
     const createdPlace = new Place({
         title,
         description,
-        image,
+        image: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1c/ba/d8/83/exterior.jpg?w=900&h=-1&s=1",
         location: coordinates,
         address,
         creator

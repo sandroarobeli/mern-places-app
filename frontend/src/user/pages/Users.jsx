@@ -1,30 +1,47 @@
 // Third party components
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 // Custom components
 import UsersList from '../components/UsersList'
+import ErrorModal from '../../shared/components/UIElements/ErrorModal'
+import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner'
+import { useHttpClient } from '../../shared/hooks/http-hook'
+
 
 const Users = () => {
+    // const [isLoading, setIsLoading] = useState(false)
+    // const [error, setError] = useState()
+    const [loadedUsers, setLoadedUsers] = useState([])
+    const { isLoading, error, sendRequest, clearError } = useHttpClient()
 
-    // Temporary container for data
-    const USERS = [
-        {
-            id: 'u1',
-            name: 'Marillon Cotillard',
-            image: 'https://ca-times.brightspotcdn.com/dims4/default/3875161/2147483647/strip/true/crop/381x512+0+0/resize/840x1129!/quality/90/?url=https%3A%2F%2Fcalifornia-times-brightspot.s3.amazonaws.com%2Fde%2Faa%2F9fe6971fe714e7d9b79b5806a159%2Fsdut-file-in-this-may-21-2009-fil-20160829-002',
-            places: 3
-        },
-        {
-            id: "u2",
-            name: "Olga Kurylenko",
-            image:
-                "https://tr-images.condecdn.net/image/4lKNoX16pYJ/crop/405/f/olga-kurylenko-conde-nast-traveller-2april15-getty_.jpg",
-            places: 7
+    // Never use async inside useEffect callback function, use regular function as below
+    // And create async function as axilliary and call it afterwords
+    useEffect(() => {
+       const fetchUsers = async () => {
+           
+           try {
+                const data = await sendRequest('http://127.0.0.1:5000/api/users') 
+                setLoadedUsers(data.users)
+            } catch (error) {
+                console.log(error.message) // test
+            }
         }
-    ]
 
+       fetchUsers()
+    }, [sendRequest])
+    
+    
     return (
-        <UsersList items={USERS} />
+        <React.Fragment>
+            <ErrorModal error={error} onClear={clearError} />
+            {
+                isLoading && 
+                    <div className='center'>
+                        <LoadingSpinner />
+                    </div>
+            }
+            {!isLoading && loadedUsers && <UsersList items={loadedUsers} />} 
+        </React.Fragment>
     )
 }
 

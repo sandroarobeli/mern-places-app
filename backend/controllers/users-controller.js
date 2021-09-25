@@ -9,7 +9,7 @@ const templateEmails = require('../utility/emails')
 // List all users
 const getUsers = async (req, res, next) => {
     try {
-        const AllUsers = await User.find({}, 'name email') // only shows name & email properties
+        const AllUsers = await User.find({}, 'name email image places') // only shows name, email, image & places properties
         if (AllUsers.length === 0) {
             return next(new HttpError('No users found', 404))
         }
@@ -71,7 +71,10 @@ const login = async (req, res, next) => {
         } else if (existingUser.password !== password) {
             return next(new HttpError('Invalid credentials entered. Please check your credentials and try again', 401))
         }
-        res.status(200).json({ message: `Login successful, welcome ${existingUser.name}!` })
+        res.status(200).json({ 
+            message: `Login successful, welcome ${existingUser.name}!`,
+            user: existingUser.toObject({ getters: true })
+        })
     } catch (error) {
         return next(new HttpError(`Login failed: ${error.message}`, 500))
     }
